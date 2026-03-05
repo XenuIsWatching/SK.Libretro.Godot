@@ -22,6 +22,8 @@ var is_powered_on: bool = false
 @onready var _cartridge_slot: XRToolsSnapZone = $CartridgeSlot
 @onready var _cable_attach_point: XRToolsSnapZone = $CableAttachPoint
 @onready var _libretro: Libretro = $Libretro
+@onready var _power_button: VRButton = $PowerButton
+@onready var _reset_button: VRButton = $ResetButton
 
 
 func _ready() -> void:
@@ -30,6 +32,8 @@ func _ready() -> void:
 	_cartridge_slot.has_dropped.connect(_on_cartridge_removed)
 	_cable_attach_point.has_picked_up.connect(_on_cable_snapped)
 	_cable_attach_point.has_dropped.connect(_on_cable_removed)
+	_power_button.button_pressed.connect(toggle_power)
+	_reset_button.button_pressed.connect(reset)
 
 
 ## Called by the TV's cable plug when it connects to a TV

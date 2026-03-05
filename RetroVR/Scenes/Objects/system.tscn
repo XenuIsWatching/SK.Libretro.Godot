@@ -1,7 +1,8 @@
-[gd_scene load_steps=17 format=3 uid="uid://system_base_001"]
+[gd_scene load_steps=18 format=3 uid="uid://system_base_001"]
 
 [ext_resource type="Script" path="res://Scripts/Objects/system.gd" id="1_sysscript"]
 [ext_resource type="PackedScene" uid="uid://ce7vysyvondf8" path="res://addons/godot-xr-tools/objects/snap_zone.tscn" id="2_snapzone"]
+[ext_resource type="Script" path="res://Scripts/Objects/vr_button.gd" id="3_vrbtn"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_body"]
 size = Vector3(0.3, 0.1, 0.25)
@@ -78,6 +79,7 @@ surface_material_override/0 = SubResource("Mat_cable")
 
 [node name="PowerButton" type="Area3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.08, 0.06, 0.1)
+script = ExtResource("3_vrbtn")
 collision_layer = 0
 collision_mask = 524288
 
@@ -90,6 +92,7 @@ surface_material_override/0 = SubResource("Mat_power")
 
 [node name="ResetButton" type="Area3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.08, 0.06, 0.1)
+script = ExtResource("3_vrbtn")
 collision_layer = 0
 collision_mask = 524288
 
