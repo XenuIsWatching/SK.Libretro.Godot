@@ -1,0 +1,67 @@
+[gd_scene format=3 uid="uid://bh8x3sbal8nds"]
+
+[ext_resource type="PackedScene" uid="uid://clejifnsfcmsn" path="res://Scenes/magic_deniro_80_hor.tscn" id="2_c6dvc"]
+[ext_resource type="Script" uid="uid://bqeoe2amot06a" path="res://Scripts/libretro.gd" id="2_tr2i4"]
+[ext_resource type="Script" uid="uid://btn0gji8qtw2l" path="res://Scripts/xr_init.gd" id="3_xrinit"]
+[ext_resource type="Script" uid="uid://uo8faq7roeey" path="res://Scripts/controller_model.gd" id="4_ctrlmodel"]
+[ext_resource type="PackedScene" uid="uid://b4ysuy43poobf" path="res://addons/godot-xr-tools/functions/function_pickup.tscn" id="5_pickup"]
+[ext_resource type="PackedScene" uid="uid://cqhw276realc" path="res://addons/godot-xr-tools/functions/function_pointer.tscn" id="6_pointer"]
+[ext_resource type="PackedScene" path="res://Scenes/TestBox.tscn" id="7_testbox"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_floor"]
+size = Vector3(20, 0.1, 20)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_floor"]
+size = Vector2(20, 20)
+
+[node name="Root" type="Node3D" unique_id=1033434416]
+script = ExtResource("3_xrinit")
+
+[node name="XROrigin3D" type="XROrigin3D" parent="." unique_id=1434750428]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.2)
+
+[node name="XRCamera3D" type="XRCamera3D" parent="XROrigin3D" unique_id=1434750429]
+
+[node name="LeftController" type="XRController3D" parent="XROrigin3D" unique_id=1434750430]
+tracker = &"left_hand"
+script = ExtResource("4_ctrlmodel")
+
+[node name="FunctionPickup" parent="XROrigin3D/LeftController" unique_id=2000000001 instance=ExtResource("5_pickup")]
+
+[node name="FunctionPointer" parent="XROrigin3D/LeftController" unique_id=2000000002 instance=ExtResource("6_pointer")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.02, 0.05, -0.1)
+
+[node name="RightController" type="XRController3D" parent="XROrigin3D" unique_id=1434750431]
+tracker = &"right_hand"
+script = ExtResource("4_ctrlmodel")
+
+[node name="FunctionPickup" parent="XROrigin3D/RightController" unique_id=2000000003 instance=ExtResource("5_pickup")]
+
+[node name="magic-deniro-80-hor" parent="." unique_id=1643439623 node_paths=PackedStringArray("monitor_node") instance=ExtResource("2_c6dvc")]
+script = ExtResource("2_tr2i4")
+monitor_node = NodePath("denirosmagicmon")
+core_directory = "C:/Users/rymcc/libretro"
+core_name = "mupen64plus_next"
+rom_path = "C:/Users/rymcc/libretro/007 - GoldenEye (USA).z64"
+
+[node name="OmniLight3D" type="OmniLight3D" parent="." unique_id=611392543]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0138264, 1.70309, 1.532)
+omni_range = 2.2381
+
+[node name="Libretro" type="Libretro" parent="." unique_id=962971065]
+
+[node name="Floor" type="StaticBody3D" parent="." unique_id=2000000020]
+collision_layer = 3
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Floor" unique_id=2000000021]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.05, 0)
+shape = SubResource("BoxShape3D_floor")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Floor" unique_id=2000000022]
+mesh = SubResource("PlaneMesh_floor")
+
+[node name="TestBox" parent="." unique_id=2000000010 instance=ExtResource("7_testbox")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.64826566, 0.7927524)
+
+[editable path="magic-deniro-80-hor"]
