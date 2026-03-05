@@ -29,6 +29,9 @@ extends MeshInstance3D
 ## Rope color
 @export var rope_color: Color = Color(0.15, 0.15, 0.15, 1.0)
 
+## Floor Y position — rope points won't fall below this
+@export var floor_y: float = 0.0
+
 
 # Internal point data
 var _points: PackedVector3Array = []  # current positions (global space)
@@ -118,6 +121,12 @@ func _physics_process(delta: float) -> void:
 			_points[0] = start_node.global_position
 		if end_node:
 			_points[count - 1] = end_node.global_position
+
+	# --- Floor collision: clamp points above floor_y ---
+	for i in range(count):
+		if _points[i].y < floor_y:
+			_points[i].y = floor_y
+			_prev_points[i].y = floor_y
 
 	# --- Render ---
 	_render_tube()
