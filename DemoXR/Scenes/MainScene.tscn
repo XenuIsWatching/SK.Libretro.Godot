@@ -2,7 +2,8 @@
 
 [ext_resource type="PackedScene" uid="uid://clejifnsfcmsn" path="res://Scenes/magic_deniro_80_hor.tscn" id="2_c6dvc"]
 [ext_resource type="Script" uid="uid://bqeoe2amot06a" path="res://Scripts/libretro.gd" id="2_tr2i4"]
-[ext_resource type="Script" path="res://Scripts/xr_init.gd" id="3_xrinit"]
+[ext_resource type="Script" uid="uid://btn0gji8qtw2l" path="res://Scripts/xr_init.gd" id="3_xrinit"]
+[ext_resource type="Script" uid="uid://uo8faq7roeey" path="res://Scripts/controller_model.gd" id="4_ctrlmodel"]
 
 [node name="Root" type="Node3D" unique_id=1033434416]
 script = ExtResource("3_xrinit")
@@ -13,10 +14,12 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.2)
 [node name="XRCamera3D" type="XRCamera3D" parent="XROrigin3D" unique_id=1434750429]
 
 [node name="LeftController" type="XRController3D" parent="XROrigin3D" unique_id=1434750430]
-tracker = "left_hand"
+tracker = &"left_hand"
+script = ExtResource("4_ctrlmodel")
 
 [node name="RightController" type="XRController3D" parent="XROrigin3D" unique_id=1434750431]
-tracker = "right_hand"
+tracker = &"right_hand"
+script = ExtResource("4_ctrlmodel")
 
 [node name="magic-deniro-80-hor" parent="." unique_id=1643439623 node_paths=PackedStringArray("monitor_node") instance=ExtResource("2_c6dvc")]
 script = ExtResource("2_tr2i4")
