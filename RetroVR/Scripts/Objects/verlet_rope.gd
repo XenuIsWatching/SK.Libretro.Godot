@@ -71,7 +71,7 @@ func _init_points() -> void:
 		_prev_points[i] = _points[i]
 
 
-func _physics_process(delta: float) -> void:
+func _process(delta: float) -> void:
 	if _points.size() == 0:
 		return
 

@@ -50,6 +50,8 @@ albedo_color = Color(0.8, 0.8, 0.8, 1.0)
 [node name="System" type="RigidBody3D"]
 collision_layer = 4
 collision_mask = 196615
+linear_damp = 3.0
+angular_damp = 5.0
 freeze_mode = 1
 script = ExtResource("1_sysscript")
 

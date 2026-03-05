@@ -33,6 +33,8 @@ func _on_plug_snapped(plug: Node3D) -> void:
 	cable_connected.emit(plug)
 	if plug is CablePlug:
 		_snapped_plug = plug as CablePlug
+		# Prevent the frozen kinematic plug from physically pushing the TV
+		add_collision_exception_with(_snapped_plug)
 		var system := _snapped_plug.get_system()
 		if system:
 			system.on_tv_connected(self)
@@ -42,6 +44,7 @@ func _on_plug_snapped(plug: Node3D) -> void:
 func _on_plug_released() -> void:
 	cable_disconnected.emit()
 	if _snapped_plug:
+		remove_collision_exception_with(_snapped_plug)
 		var system := _snapped_plug.get_system()
 		if system:
 			system.on_tv_disconnected()

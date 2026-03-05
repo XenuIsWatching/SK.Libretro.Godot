@@ -27,7 +27,9 @@ albedo_color = Color(0.15, 0.15, 0.15, 1.0)
 [node name="CablePlug" type="RigidBody3D" parent="."]
 collision_layer = 4
 collision_mask = 196615
-mass = 0.05
+mass = 0.1
+linear_damp = 5.0
+angular_damp = 8.0
 gravity_scale = 1.0
 freeze = false
 freeze_mode = 1
