@@ -29,8 +29,8 @@ extends MeshInstance3D
 ## Rope color
 @export var rope_color: Color = Color(0.15, 0.15, 0.15, 1.0)
 
-## Floor Y position — rope points won't fall below this
-@export var floor_y: float = 0.0
+## Collision mask used for raycasting rope points against surfaces (layers 1+2 = floor/table)
+@export_flags_3d_physics var surface_collision_mask: int = 3
 
 
 # Internal point data
@@ -122,11 +122,22 @@ func _physics_process(delta: float) -> void:
 		if end_node:
 			_points[count - 1] = end_node.global_position
 
-	# --- Floor collision: clamp points above floor_y ---
-	for i in range(count):
-		if _points[i].y < floor_y:
-			_points[i].y = floor_y
-			_prev_points[i].y = floor_y
+	# --- Surface collision: raycast each point downward ---
+	if surface_collision_mask != 0:
+		var space_state := get_world_3d().direct_space_state
+		for i in range(count):
+			# Skip pinned anchor points
+			if i == 0 and start_node:
+				continue
+			if i == count - 1 and end_node:
+				continue
+			var from := _points[i] + Vector3(0, 0.05, 0)
+			var to := _points[i] + Vector3(0, -0.5, 0)
+			var query := PhysicsRayQueryParameters3D.create(from, to, surface_collision_mask)
+			var hit := space_state.intersect_ray(query)
+			if hit and _points[i].y < hit["position"].y:
+				_points[i].y = hit["position"].y
+				_prev_points[i].y = hit["position"].y
 
 	# --- Render ---
 	_render_tube()

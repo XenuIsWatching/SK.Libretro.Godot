@@ -53,4 +53,4 @@ segment_length = 0.06
 tube_radius = 0.005
 tube_sides = 6
 rope_color = Color(0.15, 0.15, 0.15, 1.0)
-floor_y = 0.75
+surface_collision_mask = 3

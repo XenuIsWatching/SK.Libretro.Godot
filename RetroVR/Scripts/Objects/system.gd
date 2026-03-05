@@ -72,8 +72,11 @@ func _add_cable_to_scene() -> void:
 	# Tell the plug who owns it
 	_cable_plug.set_system(self)
 
-	# Position plug near the cable attach point initially
-	_cable_plug.global_position = _cable_attach_point.global_position + Vector3(0, -0.05, 0)
+	# Exclude the plug from colliding with this system so it doesn't jitter on spawn
+	_cable_plug.add_collision_exception_with(self)
+
+	# Position plug below the cable attach point, clear of the system body
+	_cable_plug.global_position = _cable_attach_point.global_position + Vector3(0, -0.2, 0)
 
 	# Wire rope anchors: start = system's attach point, end = plug
 	_cable_rope.start_node = _cable_attach_point
