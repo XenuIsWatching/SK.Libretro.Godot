@@ -11,7 +11,8 @@
 [ext_resource type="PackedScene" uid="uid://bl2nuu3qhlb5k" path="res://addons/godot-xr-tools/functions/movement_direct.tscn" id="9_movdirect"]
 [ext_resource type="PackedScene" uid="uid://b6bk2pj8vbj28" path="res://addons/godot-xr-tools/functions/movement_turn.tscn" id="10_movturn"]
 [ext_resource type="PackedScene" uid="uid://fiul51tsyoop" path="res://addons/godot-xr-tools/functions/function_teleport.tscn" id="11_teleport"]
-[ext_resource type="Script" path="res://Scripts/stick_teleport.gd" id="12_stickteleport"]
+[ext_resource type="Script" uid="uid://bwevtpwvx1u2r" path="res://Scripts/stick_teleport.gd" id="12_stickteleport"]
+[ext_resource type="PackedScene" path="res://Scenes/Objects/tv.tscn" id="13_tv"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_floor"]
 size = Vector3(20, 0.1, 20)
@@ -52,9 +53,9 @@ turn_mode = 1
 
 [node name="FunctionTeleport" parent="XROrigin3D/RightController" unique_id=2000000033 instance=ExtResource("11_teleport")]
 script = ExtResource("12_stickteleport")
-teleport_button_action = ""
 stick_teleport_action = "primary"
 stick_teleport_threshold = 0.6
+teleport_button_action = ""
 
 [node name="magic-deniro-80-hor" parent="." unique_id=1643439623 node_paths=PackedStringArray("monitor_node") instance=ExtResource("2_c6dvc")]
 script = ExtResource("2_tr2i4")
@@ -82,5 +83,8 @@ mesh = SubResource("PlaneMesh_floor")
 
 [node name="TestBox" parent="." unique_id=2000000010 instance=ExtResource("7_testbox")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.64826566, 0.7927524)
+
+[node name="TV" parent="." unique_id=-1294967286 instance=ExtResource("13_tv")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, 0.2, -1)
 
 [editable path="magic-deniro-80-hor"]
