@@ -146,6 +146,13 @@ func _ready():
 	_update_player_material()
 
 
+## Returns true when teleport aiming is active. Override in subclasses to add custom triggers.
+func _teleport_aim_active() -> bool:
+	if not _controller or not _controller.get_is_active():
+		return false
+	return teleport_button_action != "" and _controller.is_button_pressed(teleport_button_action)
+
+
 func _physics_process(delta):
 	# Do not process physics if in the editor
 	if Engine.is_editor_hint():
@@ -174,8 +181,7 @@ func _physics_process(delta):
 		$Target.mesh.size = Vector2(ws, ws)
 		$Target/Player_figure.scale = Vector3(ws, ws, ws)
 
-	if _controller and _controller.get_is_active() and \
-			_controller.is_button_pressed(teleport_button_action):
+	if _teleport_aim_active():
 		if !is_teleporting:
 			is_teleporting = true
 			$Teleport.visible = true
