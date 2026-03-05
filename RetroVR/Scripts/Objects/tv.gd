@@ -13,6 +13,9 @@ signal cable_disconnected
 @onready var _screen_mesh: MeshInstance3D = $ScreenMesh
 @onready var _composite_port: XRToolsSnapZone = $CompositePort
 
+# Track the last-snapped plug so we can disconnect properly
+var _snapped_plug: CablePlug = null
+
 
 func _ready() -> void:
 	super._ready()
@@ -28,18 +31,18 @@ func get_screen_mesh() -> MeshInstance3D:
 ## Called when a cable plug snaps into the composite port
 func _on_plug_snapped(plug: Node3D) -> void:
 	cable_connected.emit(plug)
-	# If plug knows about a system, notify it
-	if plug.has_method("get_system"):
-		var system = plug.get_system()
-		if system and system.has_method("on_tv_connected"):
+	if plug is CablePlug:
+		_snapped_plug = plug as CablePlug
+		var system := _snapped_plug.get_system()
+		if system:
 			system.on_tv_connected(self)
 
 
 ## Called when the cable plug leaves the composite port
 func _on_plug_released() -> void:
 	cable_disconnected.emit()
-	var plug = _composite_port.picked_up_object
-	if plug and plug.has_method("get_system"):
-		var system = plug.get_system()
-		if system and system.has_method("on_tv_disconnected"):
+	if _snapped_plug:
+		var system := _snapped_plug.get_system()
+		if system:
 			system.on_tv_disconnected()
+		_snapped_plug = null

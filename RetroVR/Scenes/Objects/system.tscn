@@ -68,9 +68,8 @@ snap_require = "cartridge"
 mesh = SubResource("CylMesh_slot")
 surface_material_override/0 = SubResource("Mat_slot")
 
-[node name="CableAttachPoint" parent="." unique_id=4000000002 instance=ExtResource("2_snapzone")]
+[node name="CableAttachPoint" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.1, 0.0, -0.125)
-snap_require = "cable_system_end"
 
 [node name="PortVisual" type="MeshInstance3D" parent="CableAttachPoint"]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0, 0)

@@ -18,9 +18,15 @@ var rom_path: String = ""
 var connected_tv: RetroTV = null
 var is_powered_on: bool = false
 
+# Cable scene to instantiate
+const CABLE_SCENE := preload("res://Scenes/Objects/cable.tscn")
+var _cable_instance: Node3D = null
+var _cable_plug: CablePlug = null
+var _cable_rope: VerletRope = null
+
 
 @onready var _cartridge_slot: XRToolsSnapZone = $CartridgeSlot
-@onready var _cable_attach_point: XRToolsSnapZone = $CableAttachPoint
+@onready var _cable_attach_point: Node3D = $CableAttachPoint
 @onready var _libretro: Libretro = $Libretro
 @onready var _power_button: VRButton = $PowerButton
 @onready var _reset_button: VRButton = $ResetButton
@@ -30,12 +36,12 @@ func _ready() -> void:
 	super._ready()
 	_cartridge_slot.has_picked_up.connect(_on_cartridge_inserted)
 	_cartridge_slot.has_dropped.connect(_on_cartridge_removed)
-	_cable_attach_point.has_picked_up.connect(_on_cable_snapped)
-	_cable_attach_point.has_dropped.connect(_on_cable_removed)
 	_power_button.button_pressed.connect(toggle_power)
 	_reset_button.button_pressed.connect(reset)
 	# Initialize power button to "off" color
 	_power_button.set_color(Color(0.0, 0.8, 0.1))
+	# Spawn cable
+	_spawn_cable()
 
 
 ## Called by the TV's cable plug when it connects to a TV
@@ -50,19 +56,29 @@ func on_tv_disconnected() -> void:
 	connected_tv = null
 
 
-# --- Cable attach point callbacks ---
+# --- Cable management ---
 
-func _on_cable_snapped(cable_end: Node3D) -> void:
-	# The system end of the cable snapped in — nothing to do yet,
-	# the TV connection is handled by the plug end snapping into the TV's CompositePort
-	pass
+func _spawn_cable() -> void:
+	_cable_instance = CABLE_SCENE.instantiate()
+	# Add cable to scene root so it's not affected by system's RigidBody transform weirdness
+	call_deferred("_add_cable_to_scene")
 
 
-func _on_cable_removed() -> void:
-	# Cable disconnected from system — also disconnect from TV
-	if is_powered_on:
-		power_off()
-	connected_tv = null
+func _add_cable_to_scene() -> void:
+	get_tree().current_scene.add_child(_cable_instance)
+	_cable_plug = _cable_instance.get_node("CablePlug") as CablePlug
+	_cable_rope = _cable_instance.get_node("VerletRope") as VerletRope
+
+	# Tell the plug who owns it
+	_cable_plug.set_system(self)
+
+	# Position plug near the cable attach point initially
+	_cable_plug.global_position = _cable_attach_point.global_position + Vector3(0, -0.05, 0)
+
+	# Wire rope anchors: start = system's attach point, end = plug
+	_cable_rope.start_node = _cable_attach_point
+	_cable_rope.end_node = _cable_plug
+	_cable_rope._init_points()
 
 
 ## Power on: start this system's libretro core
