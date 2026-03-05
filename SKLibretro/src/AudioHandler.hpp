@@ -3,7 +3,7 @@
 #include <godot_cpp/classes/ref.hpp>
 #include <godot_cpp/classes/audio_stream_generator.hpp>
 #include <godot_cpp/classes/audio_stream_generator_playback.hpp>
-#include <godot_cpp/classes/audio_stream_player.hpp>
+#include <godot_cpp/classes/audio_stream_player3d.hpp>
 
 #include <cstdint>
 
@@ -28,7 +28,7 @@ public:
 private:
     godot::Ref<godot::AudioStreamGenerator> m_audio_stream_generator = nullptr;
     godot::Ref<godot::AudioStreamGeneratorPlayback> m_audio_stream_generator_playback = nullptr;
-    godot::AudioStreamPlayer* m_audio_stream_player = nullptr;
+    godot::AudioStreamPlayer3D* m_audio_stream_player = nullptr;
     float m_audio_buffer_capacity_sec = 0;
     double m_audio_sample_rate = 0.0;
     uint32_t m_audio_buffer_total_frames = 0;

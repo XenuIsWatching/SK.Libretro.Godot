@@ -9,6 +9,7 @@
 #include <godot_cpp/classes/input_event_mouse_button.hpp>
 #include <godot_cpp/classes/input_event_key.hpp>
 #include <godot_cpp/classes/mesh_instance3d.hpp>
+#include <godot_cpp/classes/audio_stream_player3d.hpp>
 
 #include <filesystem>
 #include <fstream>
@@ -296,8 +297,8 @@ void Wrapper::StartContent(MeshInstance3D* node, const std::string& root_directo
 
     m_node = node;
 
-    auto audio_stream_player = memnew(AudioStreamPlayer);
-    audio_stream_player->set_name("AudioStreamPlayer");
+    auto audio_stream_player = memnew(AudioStreamPlayer3D);
+    audio_stream_player->set_name("AudioStreamPlayer3D");
     m_node->add_child(audio_stream_player);
 
     std::filesystem::path core_path = std::filesystem::path(root_directory).append("cores").append(core_name + "_libretro").replace_extension(".dll");

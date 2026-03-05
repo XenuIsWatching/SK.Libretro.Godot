@@ -1,6 +1,6 @@
 #include "ThreadCommandInitAudio.hpp"
 
-#include <godot_cpp/classes/audio_stream_player.hpp>
+#include <godot_cpp/classes/audio_stream_player3d.hpp>
 
 #include <mutex>
 

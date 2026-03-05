@@ -75,7 +75,7 @@ void AudioHandler::Init(float buffer_capacity_sec, double sample_rate)
     m_audio_stream_generator->set_mix_rate(m_audio_sample_rate);
     m_audio_stream_generator->set_buffer_length(m_audio_buffer_capacity_sec);
 
-    m_audio_stream_player = Wrapper::GetCurrentThreadWrapper()->m_node->get_node<godot::AudioStreamPlayer>("AudioStreamPlayer");
+    m_audio_stream_player = Wrapper::GetCurrentThreadWrapper()->m_node->get_node<godot::AudioStreamPlayer3D>("AudioStreamPlayer3D");
     m_audio_stream_player->set_stream(m_audio_stream_generator);
     m_audio_stream_player->play();
 
