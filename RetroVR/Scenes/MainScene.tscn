@@ -13,6 +13,7 @@
 [ext_resource type="PackedScene" uid="uid://fiul51tsyoop" path="res://addons/godot-xr-tools/functions/function_teleport.tscn" id="11_teleport"]
 [ext_resource type="Script" uid="uid://bwevtpwvx1u2r" path="res://Scripts/stick_teleport.gd" id="12_stickteleport"]
 [ext_resource type="PackedScene" path="res://Scenes/Objects/tv.tscn" id="13_tv"]
+[ext_resource type="PackedScene" uid="uid://system_nes_001" path="res://Scenes/Objects/system_nes.tscn" id="14_nes"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_floor"]
 size = Vector3(20, 0.1, 20)
@@ -86,5 +87,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.64826566, 0.7927524)
 
 [node name="TV" parent="." unique_id=-1294967286 instance=ExtResource("13_tv")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, 0.2, -1)
+
+[node name="NESSystem" parent="." unique_id=4000000010 instance=ExtResource("14_nes")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0.05, -0.8)
 
 [editable path="magic-deniro-80-hor"]

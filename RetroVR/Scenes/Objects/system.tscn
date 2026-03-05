@@ -1,0 +1,101 @@
+[gd_scene load_steps=17 format=3 uid="uid://system_base_001"]
+
+[ext_resource type="Script" path="res://Scripts/Objects/system.gd" id="1_sysscript"]
+[ext_resource type="PackedScene" uid="uid://ce7vysyvondf8" path="res://addons/godot-xr-tools/objects/snap_zone.tscn" id="2_snapzone"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_body"]
+size = Vector3(0.3, 0.1, 0.25)
+
+[sub_resource type="BoxMesh" id="BoxMesh_body"]
+size = Vector3(0.3, 0.1, 0.25)
+
+[sub_resource type="StandardMaterial3D" id="Mat_body"]
+albedo_color = Color(0.5, 0.5, 0.5, 1.0)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_power"]
+size = Vector3(0.04, 0.02, 0.04)
+
+[sub_resource type="BoxMesh" id="BoxMesh_power"]
+size = Vector3(0.04, 0.02, 0.04)
+
+[sub_resource type="StandardMaterial3D" id="Mat_power"]
+albedo_color = Color(0.0, 0.8, 0.1, 1.0)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_reset"]
+size = Vector3(0.03, 0.02, 0.03)
+
+[sub_resource type="BoxMesh" id="BoxMesh_reset"]
+size = Vector3(0.03, 0.02, 0.03)
+
+[sub_resource type="StandardMaterial3D" id="Mat_reset"]
+albedo_color = Color(0.2, 0.2, 0.2, 1.0)
+
+[sub_resource type="CylinderMesh" id="CylMesh_slot"]
+top_radius = 0.03
+bottom_radius = 0.03
+height = 0.015
+
+[sub_resource type="StandardMaterial3D" id="Mat_slot"]
+albedo_color = Color(0.15, 0.15, 0.15, 1.0)
+
+[sub_resource type="CylinderMesh" id="CylMesh_cable"]
+top_radius = 0.012
+bottom_radius = 0.012
+height = 0.02
+
+[sub_resource type="StandardMaterial3D" id="Mat_cable"]
+albedo_color = Color(0.8, 0.8, 0.8, 1.0)
+
+[node name="System" type="RigidBody3D"]
+collision_layer = 4
+collision_mask = 196615
+freeze_mode = 1
+script = ExtResource("1_sysscript")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_body")
+
+[node name="SystemBody" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_body")
+surface_material_override/0 = SubResource("Mat_body")
+
+[node name="CartridgeSlot" parent="." unique_id=4000000001 instance=ExtResource("2_snapzone")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.07, 0.0)
+snap_require = "cartridge"
+
+[node name="SlotVisual" type="MeshInstance3D" parent="CartridgeSlot"]
+mesh = SubResource("CylMesh_slot")
+surface_material_override/0 = SubResource("Mat_slot")
+
+[node name="CableAttachPoint" parent="." unique_id=4000000002 instance=ExtResource("2_snapzone")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.1, 0.0, -0.125)
+snap_require = "cable_system_end"
+
+[node name="PortVisual" type="MeshInstance3D" parent="CableAttachPoint"]
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0, 0)
+mesh = SubResource("CylMesh_cable")
+surface_material_override/0 = SubResource("Mat_cable")
+
+[node name="PowerButton" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.08, 0.06, 0.1)
+collision_layer = 0
+collision_mask = 524288
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PowerButton"]
+shape = SubResource("BoxShape3D_power")
+
+[node name="ButtonMesh" type="MeshInstance3D" parent="PowerButton"]
+mesh = SubResource("BoxMesh_power")
+surface_material_override/0 = SubResource("Mat_power")
+
+[node name="ResetButton" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.08, 0.06, 0.1)
+collision_layer = 0
+collision_mask = 524288
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ResetButton"]
+shape = SubResource("BoxShape3D_reset")
+
+[node name="ButtonMesh" type="MeshInstance3D" parent="ResetButton"]
+mesh = SubResource("BoxMesh_reset")
+surface_material_override/0 = SubResource("Mat_reset")
