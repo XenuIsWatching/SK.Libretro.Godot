@@ -34,6 +34,8 @@ func _ready() -> void:
 	_cable_attach_point.has_dropped.connect(_on_cable_removed)
 	_power_button.button_pressed.connect(toggle_power)
 	_reset_button.button_pressed.connect(reset)
+	# Initialize power button to "off" color
+	_power_button.set_color(Color(0.0, 0.8, 0.1))
 
 
 ## Called by the TV's cable plug when it connects to a TV
@@ -68,22 +70,32 @@ func power_on() -> void:
 	if is_powered_on:
 		return
 	if connected_tv == null:
-		push_warning("RetroSystem: no TV connected, cannot power on")
+		push_error("RetroSystem: Cannot power on - no TV connected")
 		return
 	if rom_path.is_empty():
-		push_warning("RetroSystem: no cartridge inserted, cannot power on")
+		push_error("RetroSystem: Cannot power on - no cartridge inserted")
+		return
+	if core_name.is_empty():
+		push_error("RetroSystem: Cannot power on - core_name not set")
+		return
+	if core_directory.is_empty():
+		push_error("RetroSystem: Cannot power on - core_directory not set")
 		return
 
+	print("[RetroSystem] Powering on: core=%s, rom=%s" % [core_name, rom_path])
 	_libretro.StartContent(connected_tv.get_screen_mesh(), core_directory, core_name, rom_path)
 	is_powered_on = true
+	_power_button.set_color(Color(0.0, 1.0, 0.0))  # Bright green when on
 
 
 ## Power off: stop the running core
 func power_off() -> void:
 	if not is_powered_on:
 		return
+	print("[RetroSystem] Powering off")
 	_libretro.StopContent()
 	is_powered_on = false
+	_power_button.set_color(Color(0.0, 0.8, 0.1))  # Dim green when off
 
 
 ## Toggle power (used by the power button)

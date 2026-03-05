@@ -60,3 +60,15 @@ func _process(_delta: float) -> void:
 	elif not touching and _is_pressed:
 		_is_pressed = false
 		_mesh.position = _mesh_origin
+
+
+## Set the button's visual color by changing its material albedo
+func set_color(color: Color) -> void:
+	if not _mesh:
+		return
+	# Get or create material override
+	var mat := _mesh.get_surface_override_material(0)
+	if not mat or not mat is StandardMaterial3D:
+		mat = StandardMaterial3D.new()
+		_mesh.set_surface_override_material(0, mat)
+	(mat as StandardMaterial3D).albedo_color = color
