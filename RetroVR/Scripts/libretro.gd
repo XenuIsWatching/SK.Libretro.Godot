@@ -5,6 +5,10 @@ extends Node
 @export var core_name: String
 @export_global_file var rom_path: String
 
+## Reference to the Libretro node that this controller drives.
+## If left empty it will find the first Libretro node in the scene tree.
+@export var libretro_node: Libretro
+
 @onready var options_scene = preload("res://Scenes/core_options.tscn")
 @onready var category_scene = preload("res://Scenes/core_option_category.tscn")
 @onready var option_scene = preload("res://Scenes/core_option.tscn")
@@ -13,7 +17,10 @@ var vbox
 var right_controller: XRController3D
 
 func _ready():
-	Libretro.ConnectOptionsReady(Callable(self, "_on_options_ready"))
+	if not libretro_node:
+		libretro_node = get_tree().root.find_child("Libretro", true, false) as Libretro
+	if libretro_node:
+		libretro_node.ConnectOptionsReady(Callable(self, "_on_options_ready"))
 	right_controller = get_tree().current_scene.get_node_or_null("XROrigin3D/RightController")
 	if right_controller:
 		right_controller.button_pressed.connect(_on_controller_button_pressed)
@@ -25,9 +32,9 @@ func _on_controller_button_pressed(button_name: String):
 			print("monitor node not found")
 			return
 		clear_options()
-		Libretro.StartContent(monitor_node, core_directory, core_name, rom_path)
+		libretro_node.StartContent(monitor_node, core_directory, core_name, rom_path)
 	elif button_name == "b_button":
-		Libretro.StopContent()
+		libretro_node.StopContent()
 		clear_options()
 	elif button_name == "ax_button":
 		if vbox:
@@ -41,10 +48,10 @@ func _unhandled_input(event):
 			return
 
 		clear_options()
-		Libretro.StartContent(monitor_node, core_directory, core_name, rom_path)
+		libretro_node.StartContent(monitor_node, core_directory, core_name, rom_path)
 
 	if event.is_action_pressed("retro_stop_emulation"):
-		Libretro.StopContent()
+		libretro_node.StopContent()
 		clear_options()
 		
 	if event.is_action_pressed("retro_toggle_core_options"):
@@ -124,7 +131,8 @@ func _on_fold_pressed(options_box, fold_button):
 	options_box.visible = !options_box.visible
 
 func _on_core_option_selected(index, key, dropdown):
-	Libretro.SetCoreOption(key, dropdown.get_item_text(index))
+	if libretro_node:
+		libretro_node.SetCoreOption(key, dropdown.get_item_text(index))
 
 func clear_options():
 	if vbox:

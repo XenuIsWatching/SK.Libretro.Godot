@@ -33,12 +33,29 @@ class SDL_Window;
 
 namespace SK
 {
+// Forward declaration to avoid circular include (Libretro.hpp includes Wrapper.hpp indirectly)
+class Libretro;
+
 class Wrapper
 {
 public:
+    Wrapper() = default;
     ~Wrapper() = default;
 
-    static Wrapper* GetInstance();
+    Wrapper(const Wrapper&) = delete;
+    Wrapper& operator=(const Wrapper&) = delete;
+    Wrapper(Wrapper&&) = delete;
+    Wrapper& operator=(Wrapper&&) = delete;
+
+    /// Returns the Wrapper instance currently running on this thread (set at the
+    /// start of each emulation thread loop). Returns nullptr on the main thread
+    /// unless explicitly set via SetCurrentThreadWrapper.
+    static Wrapper* GetCurrentThreadWrapper();
+
+    /// Set or clear the current-thread Wrapper pointer. Called automatically by
+    /// the emulation thread; also used by thread commands and cleanup code that
+    /// run on the main thread and need access to the owning Wrapper.
+    static void SetCurrentThreadWrapper(Wrapper* wrapper);
 
     void StartContent(godot::MeshInstance3D* node, const std::string& root_directory, const std::string& core_name, const std::string& game_path);
     void StopContent();
@@ -81,6 +98,9 @@ public:
 
     std::vector<unsigned char> m_game_buffer;
 
+    /// The Libretro node that owns this Wrapper (set by Libretro constructor).
+    Libretro* m_libretro_node = nullptr;
+
     void StopEmulationThread();
     void EmulationThreadLoop();
     void CreateTexture(godot::Image::Format image_format, godot::PackedByteArray pixel_data, int32_t width, int32_t height, bool flip_y);
@@ -89,12 +109,5 @@ public:
     bool Shutdown();
 
     static void LedInterfaceSetLedState(int32_t led, int32_t state);
-
-private:
-    Wrapper() = default;
-    Wrapper(const Wrapper&) = delete;
-    Wrapper& operator=(const Wrapper&) = delete;
-    Wrapper(Wrapper&&) = delete;
-    Wrapper& operator=(Wrapper&&) = delete;
 };
 }

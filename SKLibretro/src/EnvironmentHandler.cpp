@@ -209,7 +209,7 @@ EnvironmentHandler::EnvironmentHandler()
 
 bool EnvironmentHandler::Callback(uint32_t cmd, void* data)
 {
-    auto instance = Wrapper::GetInstance();
+    auto instance = Wrapper::GetCurrentThreadWrapper();
     if (!instance)
     {
         LogError("Callback: Null Instance.");
@@ -474,7 +474,7 @@ bool EnvironmentHandler::SetMemoryMaps(const retro_memory_map* memory_maps)
 bool EnvironmentHandler::GetUsername(const char** username) const
 {
     if (username)
-        *username = Wrapper::GetInstance()->m_username.c_str();
+        *username = Wrapper::GetCurrentThreadWrapper()->m_username.c_str();
     return true;
 }
 
@@ -517,7 +517,7 @@ bool EnvironmentHandler::GetVfsInterface(retro_vfs_interface_info* vfs_interface
 bool EnvironmentHandler::GetLedInterface(retro_led_interface* led_interface)
 {
     if (led_interface)
-        led_interface->set_led_state = Wrapper::GetInstance()->LedInterfaceSetLedState;
+        led_interface->set_led_state = Wrapper::LedInterfaceSetLedState;
     return true;
 }
 

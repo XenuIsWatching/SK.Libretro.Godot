@@ -8,21 +8,24 @@
 
 namespace SK
 {
-ThreadCommandInitAudio::ThreadCommandInitAudio(float bufferCapacitySec, double sampleRate)
-: m_bufferCapacitySec(bufferCapacitySec)
+ThreadCommandInitAudio::ThreadCommandInitAudio(Wrapper* wrapper, float bufferCapacitySec, double sampleRate)
+: m_wrapper(wrapper)
+, m_bufferCapacitySec(bufferCapacitySec)
 , m_sampleRate(sampleRate)
 {
 }
 
 void ThreadCommandInitAudio::Execute()
 {
-    auto instance = Wrapper::GetInstance();
+    Wrapper::SetCurrentThreadWrapper(m_wrapper);
 
-    std::unique_lock<std::mutex> lock(instance->m_mutex);
+    std::unique_lock<std::mutex> lock(m_wrapper->m_mutex);
 
-    instance->m_audio_handler->Init(m_bufferCapacitySec, m_sampleRate);
+    m_wrapper->m_audio_handler->Init(m_bufferCapacitySec, m_sampleRate);
 
-    instance->m_mutex_done = true;
-    instance->m_condition_variable.notify_one();
+    m_wrapper->m_mutex_done = true;
+    m_wrapper->m_condition_variable.notify_one();
+
+    Wrapper::SetCurrentThreadWrapper(nullptr);
 }
 }

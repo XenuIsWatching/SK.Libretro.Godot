@@ -6,14 +6,17 @@ using namespace godot;
 
 namespace SK
 {
-ThreadCommandUpdateTexture::ThreadCommandUpdateTexture(PackedByteArray pixelData, bool flipY)
-: m_pixelData(pixelData)
+ThreadCommandUpdateTexture::ThreadCommandUpdateTexture(Wrapper* wrapper, PackedByteArray pixelData, bool flipY)
+: m_wrapper(wrapper)
+, m_pixelData(pixelData)
 , m_flipY(flipY)
 {
 }
 
 void ThreadCommandUpdateTexture::Execute()
 {
-    Wrapper::GetInstance()->m_video_handler->UpdateTexture(m_pixelData, m_flipY);
+    Wrapper::SetCurrentThreadWrapper(m_wrapper);
+    m_wrapper->m_video_handler->UpdateTexture(m_pixelData, m_flipY);
+    Wrapper::SetCurrentThreadWrapper(nullptr);
 }
 }

@@ -61,7 +61,7 @@ bool Core::Load()
     m_name = name;
 
     std::string extension = std::filesystem::path(m_path).extension().string();
-    std::filesystem::path temp_path = std::filesystem::path(Wrapper::GetInstance()->GetTempDirectory()) / (name + GenerateHex(10) + extension);
+    std::filesystem::path temp_path = std::filesystem::path(Wrapper::GetCurrentThreadWrapper()->GetTempDirectory()) / (name + GenerateHex(10) + extension);
     if (!std::filesystem::copy_file(m_path, temp_path, std::filesystem::copy_options::overwrite_existing))
     {
         LogError("Failed to copy core file: " + m_path + " to " + temp_path.string());

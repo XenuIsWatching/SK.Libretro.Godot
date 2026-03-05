@@ -171,8 +171,8 @@ void OptionsHandler::SetVariable(const std::string& key, const std::string& valu
 
 void OptionsHandler::SerializeToFile()
 {
-    const auto& root_directory = Wrapper::GetInstance()->GetRootDirectory();
-    const auto& core_name = Wrapper::GetInstance()->m_core->GetName();
+    const auto& root_directory = Wrapper::GetCurrentThreadWrapper()->GetRootDirectory();
+    const auto& core_name = Wrapper::GetCurrentThreadWrapper()->m_core->GetName();
     std::filesystem::path file_path = std::filesystem::path(root_directory) / "core_options" / (core_name + ".opt");
     
     if (!std::filesystem::is_regular_file(file_path))
@@ -202,8 +202,8 @@ void OptionsHandler::SerializeToFile()
 
 void OptionsHandler::DeserializeFromFile()
 {
-    const auto& root_directory = Wrapper::GetInstance()->GetRootDirectory();
-    const auto& core_name = Wrapper::GetInstance()->m_core->GetName();
+    const auto& root_directory = Wrapper::GetCurrentThreadWrapper()->GetRootDirectory();
+    const auto& core_name = Wrapper::GetCurrentThreadWrapper()->m_core->GetName();
     std::filesystem::path file_path = std::filesystem::path(root_directory) / "core_options" / (core_name + ".opt");
 
     if (!std::filesystem::is_regular_file(file_path))

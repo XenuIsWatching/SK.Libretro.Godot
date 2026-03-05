@@ -21,6 +21,7 @@ var is_powered_on: bool = false
 
 @onready var _cartridge_slot: XRToolsSnapZone = $CartridgeSlot
 @onready var _cable_attach_point: XRToolsSnapZone = $CableAttachPoint
+@onready var _libretro: Libretro = $Libretro
 
 
 func _ready() -> void:
@@ -58,7 +59,7 @@ func _on_cable_removed() -> void:
 	connected_tv = null
 
 
-## Power on: stop any running system, then start this one
+## Power on: start this system's libretro core
 func power_on() -> void:
 	if is_powered_on:
 		return
@@ -69,19 +70,16 @@ func power_on() -> void:
 		push_warning("RetroSystem: no cartridge inserted, cannot power on")
 		return
 
-	SystemManager.stop_active_system()
-	Libretro.StartContent(connected_tv.get_screen_mesh(), core_directory, core_name, rom_path)
+	_libretro.StartContent(connected_tv.get_screen_mesh(), core_directory, core_name, rom_path)
 	is_powered_on = true
-	SystemManager.set_active_system(self)
 
 
 ## Power off: stop the running core
 func power_off() -> void:
 	if not is_powered_on:
 		return
-	Libretro.StopContent()
+	_libretro.StopContent()
 	is_powered_on = false
-	SystemManager.clear_active_system()
 
 
 ## Toggle power (used by the power button)

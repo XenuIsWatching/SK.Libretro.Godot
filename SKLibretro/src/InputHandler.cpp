@@ -11,7 +11,7 @@ void InputHandler::PollCallback()
 
 int16_t InputHandler::StateCallback(uint32_t port, uint32_t device, uint32_t index, uint32_t id)
 {
-    auto instance = Wrapper::GetInstance();
+    auto instance = Wrapper::GetCurrentThreadWrapper();
     if (!instance)
     {
         LogError("Libretro instance is null.");

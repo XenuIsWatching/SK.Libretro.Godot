@@ -6,15 +6,18 @@
 
 namespace SK
 {
+class Wrapper;
+
 class ThreadCommandUpdateTexture : public ThreadCommand
 {
 public:
-    ThreadCommandUpdateTexture(godot::PackedByteArray pixelData, bool flipY);
+    ThreadCommandUpdateTexture(Wrapper* wrapper, godot::PackedByteArray pixelData, bool flipY);
     ~ThreadCommandUpdateTexture() override = default;
 
     void Execute() override;
 
 private:
+    Wrapper* m_wrapper;
     godot::PackedByteArray m_pixelData;
     bool m_flipY;
 };

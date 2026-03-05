@@ -11,7 +11,7 @@ namespace SK
 {
 void AudioHandler::SampleCallback(int16_t left, int16_t right)
 {
-    auto instance = Wrapper::GetInstance();
+    auto instance = Wrapper::GetCurrentThreadWrapper();
     if (!instance)
     {
         LogError("SampleCallback: Null Instance.");
@@ -31,7 +31,7 @@ size_t AudioHandler::SampleBatchCallback(const int16_t* data, size_t frames)
     if (!data)
         return frames;
 
-    auto instance = Wrapper::GetInstance();
+    auto instance = Wrapper::GetCurrentThreadWrapper();
     if (!instance)
     {
         LogError("SampleBatchCallback: Null Instance.");
@@ -75,7 +75,7 @@ void AudioHandler::Init(float buffer_capacity_sec, double sample_rate)
     m_audio_stream_generator->set_mix_rate(m_audio_sample_rate);
     m_audio_stream_generator->set_buffer_length(m_audio_buffer_capacity_sec);
 
-    m_audio_stream_player = Wrapper::GetInstance()->m_node->get_node<godot::AudioStreamPlayer>("AudioStreamPlayer");
+    m_audio_stream_player = Wrapper::GetCurrentThreadWrapper()->m_node->get_node<godot::AudioStreamPlayer>("AudioStreamPlayer");
     m_audio_stream_player->set_stream(m_audio_stream_generator);
     m_audio_stream_player->play();
 
@@ -87,7 +87,7 @@ void AudioHandler::DeInit()
     if (m_audio_stream_player)
     {
         m_audio_stream_player->stop();
-        Wrapper::GetInstance()->m_node->remove_child(m_audio_stream_player);
+        Wrapper::GetCurrentThreadWrapper()->m_node->remove_child(m_audio_stream_player);
         m_audio_stream_player = nullptr;
     }
 

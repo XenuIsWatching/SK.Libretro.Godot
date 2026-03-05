@@ -24,12 +24,16 @@ using namespace godot;
 
 namespace SK
 {
-Wrapper* Wrapper::GetInstance()
+thread_local Wrapper* t_current_wrapper = nullptr;
+
+Wrapper* Wrapper::GetCurrentThreadWrapper()
 {
-    static Wrapper instance;
-    static std::mutex instance_mutex;
-    std::lock_guard<std::mutex> lock(instance_mutex);
-    return &instance;
+    return t_current_wrapper;
+}
+
+void Wrapper::SetCurrentThreadWrapper(Wrapper* wrapper)
+{
+    t_current_wrapper = wrapper;
 }
 
 static retro_key GodotToLibretroKeycode(const Ref<InputEventKey>& keyEvent)
@@ -547,8 +551,12 @@ void Wrapper::StopEmulationThread()
     m_running = false;
     m_thread.join();
 
+    // Set the thread-local pointer on the main thread so that handler DeInit
+    // calls (which call GetCurrentThreadWrapper()) can find the right instance.
+    SetCurrentThreadWrapper(this);
     m_video_handler->DeInit();
     m_audio_handler->DeInit();
+    SetCurrentThreadWrapper(nullptr);
 
     m_core->Unload();
 
@@ -566,6 +574,7 @@ void Wrapper::StopEmulationThread()
 
 void Wrapper::EmulationThreadLoop()
 {
+    t_current_wrapper = this;
     Log("Libretro Thread starting...");
 
     if (!m_core->Load())
@@ -641,7 +650,7 @@ void Wrapper::EmulationThreadLoop()
     {
         std::unique_lock<std::mutex> lock(m_mutex);
         m_mutex_done = false;
-        m_main_thread_commands_queue.enqueue(std::make_unique<ThreadCommandInitAudio>(0.1f, systemAvInfo.timing.sample_rate));
+        m_main_thread_commands_queue.enqueue(std::make_unique<ThreadCommandInitAudio>(this, 0.1f, systemAvInfo.timing.sample_rate));
         m_condition_variable.wait(lock, [&]{ return m_mutex_done; });
     }
 
@@ -649,7 +658,8 @@ void Wrapper::EmulationThreadLoop()
     auto last_time = std::chrono::steady_clock::now();
     double accumulator = 0.0;
 
-    Libretro::NotifyOptionsReady();
+    if (m_libretro_node)
+        m_libretro_node->NotifyOptionsReady();
 
     while (m_running)
     {
@@ -674,18 +684,19 @@ void Wrapper::EmulationThreadLoop()
     m_core->retro_deinit();
 
     m_running = false;
+    t_current_wrapper = nullptr;
     Log("Libretro thread stopped.");
 }
 
 void Wrapper::CreateTexture(Image::Format image_format, PackedByteArray pixel_data, int32_t width, int32_t height, bool flip_y)
 {
     m_video_handler->SetImageFormat(image_format);
-    m_main_thread_commands_queue.enqueue(std::make_unique<ThreadCommandCreateTexture>(image_format, pixel_data, width, height, flip_y));
+    m_main_thread_commands_queue.enqueue(std::make_unique<ThreadCommandCreateTexture>(this, image_format, pixel_data, width, height, flip_y));
 }
 
 void Wrapper::UpdateTexture(PackedByteArray pixel_data, bool flip_y)
 {
-    m_main_thread_commands_queue.enqueue(std::make_unique<ThreadCommandUpdateTexture>(pixel_data, flip_y));
+    m_main_thread_commands_queue.enqueue(std::make_unique<ThreadCommandUpdateTexture>(this, pixel_data, flip_y));
 }
 
 bool Wrapper::Shutdown()

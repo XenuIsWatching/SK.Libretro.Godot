@@ -5,6 +5,8 @@
 #include <godot_cpp/classes/input_event.hpp>
 #include <godot_cpp/variant/dictionary.hpp>
 
+#include <memory>
+
 namespace SK
 {
 class LibretroOptionCategory : public godot::RefCounted
@@ -88,6 +90,8 @@ protected:
     }
 };
 
+class Wrapper;
+
 class Libretro : public godot::Node
 {
     GDCLASS(Libretro, godot::Node);
@@ -95,24 +99,25 @@ class Libretro : public godot::Node
     friend class Wrapper;
     
 public:
+    Libretro();
     ~Libretro() = default;
 
-    static void ConnectOptionsReady(const godot::Callable& callable, uint32_t flags = 0u);
-    static void StartContent(godot::MeshInstance3D* node, godot::String root_directory, godot::String core_name, godot::String game_path);
-    static void StopContent();
+    void StartContent(godot::MeshInstance3D* node, godot::String root_directory, godot::String core_name, godot::String game_path);
+    void StopContent();
+    void SetCoreOption(const godot::String& key, const godot::String& value);
 
-    static void SetCoreOption(const godot::String& key, const godot::String& value);
+    void ConnectOptionsReady(const godot::Callable& callable, uint32_t flags = 0u);
 
     void _exit_tree();
     void _input(const godot::Ref<godot::InputEvent>& event);
     void _process(double delta);
 
+    /// Called from the emulation thread (via Wrapper::m_libretro_node) when options are ready.
+    void NotifyOptionsReady();
+
 private:
-    Libretro();
+    std::unique_ptr<Wrapper> m_wrapper;
 
-    static Libretro* m_instance;
-
-    static void NotifyOptionsReady();
     godot::Dictionary GetOptionCategories();
     godot::Dictionary GetOptionDefinitions();
     godot::Dictionary GetOptionValues();

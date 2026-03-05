@@ -21,7 +21,7 @@ void VideoHandler::RefreshCallback(const void* data, uint32_t width, uint32_t he
     if (!data || width == 0 || height == 0)
         return;
 
-    auto instance = Wrapper::GetInstance();
+    auto instance = Wrapper::GetCurrentThreadWrapper();
     if (!instance)
     {
         LogError("RefreshCallback: Null Instance.");
@@ -142,7 +142,7 @@ void VideoHandler::Init(MeshInstance3D* mesh)
 
 void VideoHandler::DeInit()
 {
-    Wrapper::GetInstance()->m_node->set_surface_override_material(0, m_original_surface_material_override);
+    Wrapper::GetCurrentThreadWrapper()->m_node->set_surface_override_material(0, m_original_surface_material_override);
 
     if (m_new_material.is_valid())
         m_new_material.unref();
@@ -328,7 +328,7 @@ void VideoHandler::CreateTexture(int32_t width, int32_t height, Image::Format im
 
     m_texture = ImageTexture::create_from_image(m_image);
 
-    Wrapper::GetInstance()->m_node->set_surface_override_material(0, m_new_material);
+    Wrapper::GetCurrentThreadWrapper()->m_node->set_surface_override_material(0, m_new_material);
     m_new_material->set_texture(StandardMaterial3D::TEXTURE_EMISSION, m_texture);
 }
 

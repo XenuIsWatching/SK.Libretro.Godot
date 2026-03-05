@@ -22,7 +22,7 @@ bool LogHandler::GetLogInterface(retro_log_callback* callback)
 
 void LogHandler::LogInterfaceLog(retro_log_level level, const char* fmt, ...)
 {
-    if (level < Wrapper::GetInstance()->m_log_handler->m_log_level)
+    if (level < Wrapper::GetCurrentThreadWrapper()->m_log_handler->m_log_level)
         return;
 
     va_list args;

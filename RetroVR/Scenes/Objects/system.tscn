@@ -99,3 +99,5 @@ shape = SubResource("BoxShape3D_reset")
 [node name="ButtonMesh" type="MeshInstance3D" parent="ResetButton"]
 mesh = SubResource("BoxMesh_reset")
 surface_material_override/0 = SubResource("Mat_reset")
+
+[node name="Libretro" type="Libretro" parent="." unique_id=4000000010]

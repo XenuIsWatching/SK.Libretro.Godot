@@ -6,74 +6,59 @@ using namespace godot;
 
 namespace SK
 {
-Libretro* Libretro::m_instance = nullptr;
-
 Libretro::Libretro()
 {
-    if (m_instance)
-    {
-        print_error("Libretro singleton already exists! Freeing duplicate.");
-        queue_free();
-        return;
-    }
-
-    m_instance = this;
+    m_wrapper = std::make_unique<Wrapper>();
+    m_wrapper->m_libretro_node = this;
 }
 
 void Libretro::ConnectOptionsReady(const godot::Callable& callable, uint32_t flags)
 {
-    if (m_instance)
-        m_instance->connect("options_ready", callable, flags);
+    connect("options_ready", callable, flags);
 }
 
 void Libretro::StartContent(MeshInstance3D* node, String root_directory, String core_name, String game_path)
 {
-    Wrapper::GetInstance()->StartContent(node, root_directory.utf8().get_data(), core_name.utf8().get_data(), game_path.utf8().get_data());
+    m_wrapper->StartContent(node, root_directory.utf8().get_data(), core_name.utf8().get_data(), game_path.utf8().get_data());
 }
 
 void Libretro::StopContent()
 {
-    Wrapper::GetInstance()->StopContent();
+    m_wrapper->StopContent();
 }
 
 void Libretro::SetCoreOption(const godot::String& key, const godot::String& value)
 {
-    Wrapper::GetInstance()->SetCoreOption(key.utf8().get_data(), value.utf8().get_data());
+    m_wrapper->SetCoreOption(key.utf8().get_data(), value.utf8().get_data());
 }
 
 void Libretro::_exit_tree()
 {
-    StopContent();
-
-    if (m_instance == this)
-        m_instance = nullptr;
+    m_wrapper->StopContent();
 }
 
 void Libretro::_input(const Ref<InputEvent>& event)
 {
-    Wrapper::GetInstance()->_input(event);
+    m_wrapper->_input(event);
 }
 
 void Libretro::_process(double delta)
 {
-    Wrapper::GetInstance()->_process(delta);
+    m_wrapper->_process(delta);
 }
 
 void Libretro::NotifyOptionsReady()
 {
-    if (!m_instance)
-        return;
-
-    auto categories     = m_instance->GetOptionCategories();
-    auto definitions    = m_instance->GetOptionDefinitions();
-    auto current_values = m_instance->GetOptionValues();
-    m_instance->call_deferred("emit_signal", "options_ready", categories, definitions, current_values);
+    auto categories     = GetOptionCategories();
+    auto definitions    = GetOptionDefinitions();
+    auto current_values = GetOptionValues();
+    call_deferred("emit_signal", "options_ready", categories, definitions, current_values);
 }
 
 Dictionary Libretro::GetOptionCategories()
 {
     Dictionary result;
-    const auto& categories = Wrapper::GetInstance()->GetOptionCategories();
+    const auto& categories = m_wrapper->GetOptionCategories();
     for (const auto& [key, value] : categories)
     {
         Ref<LibretroOptionCategory> category = memnew(LibretroOptionCategory);
@@ -87,7 +72,7 @@ Dictionary Libretro::GetOptionCategories()
 Dictionary Libretro::GetOptionDefinitions()
 {
     Dictionary result;
-    const auto& definitions = Wrapper::GetInstance()->GetOptionDefinitions();
+    const auto& definitions = m_wrapper->GetOptionDefinitions();
     for (const auto& [key, value] : definitions)
     {
         Ref<LibretroOptionDefinition> definition = memnew(LibretroOptionDefinition);
@@ -113,7 +98,7 @@ Dictionary Libretro::GetOptionDefinitions()
 Dictionary Libretro::GetOptionValues()
 {
     Dictionary result;
-    const auto& values = Wrapper::GetInstance()->GetOptionValues();
+    const auto& values = m_wrapper->GetOptionValues();
     for (const auto& [key, value] : values)
         result[String(key.c_str())] = String(value.c_str());
     return result;
@@ -121,10 +106,10 @@ Dictionary Libretro::GetOptionValues()
 
 void Libretro::_bind_methods()
 {
-    ClassDB::bind_static_method("Libretro", D_METHOD("ConnectOptionsReady", "callable", "flags"), &ConnectOptionsReady, DEFVAL(0u));
-    ClassDB::bind_static_method("Libretro", D_METHOD("StartContent", "node", "root_directory", "core_name", "game_path"), &StartContent);
-    ClassDB::bind_static_method("Libretro", D_METHOD("StopContent"), &StopContent);
-    ClassDB::bind_static_method("Libretro", D_METHOD("SetCoreOption"), &SetCoreOption);
+    ClassDB::bind_method(D_METHOD("ConnectOptionsReady", "callable", "flags"), &Libretro::ConnectOptionsReady, DEFVAL(0u));
+    ClassDB::bind_method(D_METHOD("StartContent", "node", "root_directory", "core_name", "game_path"), &Libretro::StartContent);
+    ClassDB::bind_method(D_METHOD("StopContent"), &Libretro::StopContent);
+    ClassDB::bind_method(D_METHOD("SetCoreOption", "key", "value"), &Libretro::SetCoreOption);
 
     ADD_SIGNAL(MethodInfo("options_ready", PropertyInfo(Variant::DICTIONARY, "categories"), PropertyInfo(Variant::DICTIONARY, "definitions"), PropertyInfo(Variant::DICTIONARY, "current_values")));
 }
