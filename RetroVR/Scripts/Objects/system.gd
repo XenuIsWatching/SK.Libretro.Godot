@@ -134,12 +134,20 @@ func reset() -> void:
 
 # --- Cartridge slot callbacks ---
 
+var _snapped_cartridge: Node3D = null
+
 func _on_cartridge_inserted(cartridge: Node3D) -> void:
+	_snapped_cartridge = cartridge
+	# Prevent the frozen kinematic cartridge from physically pushing the system body
+	add_collision_exception_with(cartridge)
 	if cartridge.has_method("get_rom_path"):
 		rom_path = cartridge.get_rom_path()
 
 
 func _on_cartridge_removed() -> void:
+	if _snapped_cartridge:
+		remove_collision_exception_with(_snapped_cartridge)
+		_snapped_cartridge = null
 	if is_powered_on:
 		power_off()
 	rom_path = ""
