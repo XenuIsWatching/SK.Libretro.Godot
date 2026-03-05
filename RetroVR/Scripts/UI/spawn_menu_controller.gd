@@ -68,7 +68,7 @@ func _connect_menu_signals() -> void:
 # ── Button handler ────────────────────────────────────────────────────────────
 
 func _on_controller_button(action_name: String) -> void:
-	if action_name == "menu_button":
+	if action_name == "primary_click":
 		_toggle_menu()
 
 
@@ -89,8 +89,9 @@ func _show_menu() -> void:
 			forward = Vector3.FORWARD
 		forward = forward.normalized()
 		global_position = _camera.global_position + forward * 0.9 + Vector3(0, -0.05, 0)
-		# look_at makes our -Z face the camera so the panel faces the player
+		# look_at makes -Z face the camera; rotate 180° so +Z (the UV face) faces the player
 		look_at(_camera.global_position, Vector3.UP)
+		rotate_object_local(Vector3.UP, PI)
 	_viewport_node.visible = true
 
 
