@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://system_base_001"]
+[gd_scene load_steps=19 format=3 uid="uid://system_base_001"]
 
 [ext_resource type="Script" path="res://Scripts/Objects/system.gd" id="1_sysscript"]
 [ext_resource type="PackedScene" uid="uid://ce7vysyvondf8" path="res://addons/godot-xr-tools/objects/snap_zone.tscn" id="2_snapzone"]
@@ -47,11 +47,16 @@ height = 0.02
 [sub_resource type="StandardMaterial3D" id="Mat_cable"]
 albedo_color = Color(0.8, 0.8, 0.8, 1.0)
 
+[sub_resource type="PhysicsMaterial" id="PhysMat_system"]
+bounce = 0.0
+friction = 0.8
+
 [node name="System" type="RigidBody3D"]
 collision_layer = 4
 collision_mask = 196615
-linear_damp = 3.0
-angular_damp = 5.0
+physics_material_override = SubResource("PhysMat_system")
+linear_damp = 5.0
+angular_damp = 8.0
 freeze_mode = 1
 script = ExtResource("1_sysscript")
 
