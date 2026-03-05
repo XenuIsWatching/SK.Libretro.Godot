@@ -15,6 +15,9 @@
 [ext_resource type="PackedScene" path="res://Scenes/Objects/tv.tscn" id="13_tv"]
 [ext_resource type="PackedScene" path="res://Scenes/Objects/system_nes.tscn" id="14_nes"]
 [ext_resource type="PackedScene" path="res://Scenes/Objects/cartridge.tscn" id="15_cartridge"]
+[ext_resource type="Script" path="res://Scripts/UI/spawn_menu_controller.gd" id="16_menuctl"]
+[ext_resource type="PackedScene" uid="uid://clujaf3u776a3" path="res://addons/godot-xr-tools/objects/viewport_2d_in_3d.tscn" id="17_viewport2d3d"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/spawn_menu.tscn" id="18_spawnmenu"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_floor"]
 size = Vector3(20, 0.1, 20)
@@ -23,13 +26,13 @@ size = Vector3(20, 0.1, 20)
 size = Vector2(20, 20)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_table"]
-size = Vector3(2.6, 0.05, 1.0)
+size = Vector3(2.6, 0.05, 1)
 
 [sub_resource type="BoxMesh" id="BoxMesh_table"]
-size = Vector3(2.6, 0.05, 1.0)
+size = Vector3(2.6, 0.05, 1)
 
 [sub_resource type="StandardMaterial3D" id="Mat_table"]
-albedo_color = Color(0.55, 0.35, 0.18, 1.0)
+albedo_color = Color(0.55, 0.35, 0.18, 1)
 
 [node name="Root" type="Node3D" unique_id=1033434416]
 script = ExtResource("3_xrinit")
@@ -72,6 +75,7 @@ stick_teleport_threshold = 0.6
 teleport_button_action = ""
 
 [node name="magic-deniro-80-hor" parent="." unique_id=1643439623 node_paths=PackedStringArray("monitor_node") instance=ExtResource("2_c6dvc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.6743374, 0, 0)
 script = ExtResource("2_tr2i4")
 monitor_node = NodePath("denirosmagicmon")
 core_directory = "C:/Users/rymcc/libretro"
@@ -116,11 +120,20 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.64826566, 0.7927524)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, 0.95, -1)
 
 [node name="NESSystem" parent="." unique_id=-294967286 instance=ExtResource("14_nes")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0.80, -0.8)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0.8, -0.8)
 
 [node name="NESCartridge" parent="." unique_id=705032705 instance=ExtResource("15_cartridge")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0.758, -0.55)
 rom_path = "C:/Users/rymcc/libretro/007 - GoldenEye (USA).z64"
 game_label = "007 GoldenEye"
+
+[node name="SpawnMenuController" type="Node3D" parent="." unique_id=2000000050]
+script = ExtResource("16_menuctl")
+
+[node name="SpawnMenuViewport" parent="SpawnMenuController" unique_id=2000000051 instance=ExtResource("17_viewport2d3d")]
+screen_size = Vector2(0.6, 0.5)
+viewport_size = Vector2(600, 500)
+scene = ExtResource("18_spawnmenu")
+update_mode = 1
 
 [editable path="magic-deniro-80-hor"]
