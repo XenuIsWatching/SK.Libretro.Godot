@@ -22,6 +22,15 @@ size = Vector3(20, 0.1, 20)
 [sub_resource type="PlaneMesh" id="PlaneMesh_floor"]
 size = Vector2(20, 20)
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_table"]
+size = Vector3(2.6, 0.05, 1.0)
+
+[sub_resource type="BoxMesh" id="BoxMesh_table"]
+size = Vector3(2.6, 0.05, 1.0)
+
+[sub_resource type="StandardMaterial3D" id="Mat_table"]
+albedo_color = Color(0.55, 0.35, 0.18, 1.0)
+
 [node name="Root" type="Node3D" unique_id=1033434416]
 script = ExtResource("3_xrinit")
 
@@ -86,17 +95,31 @@ shape = SubResource("BoxShape3D_floor")
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Floor" unique_id=2000000022]
 mesh = SubResource("PlaneMesh_floor")
 
+[node name="Table" type="StaticBody3D" parent="." unique_id=2000000040]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.15, 0, -0.9)
+collision_layer = 3
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Table" unique_id=2000000041]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.725, 0)
+shape = SubResource("BoxShape3D_table")
+
+[node name="TableTop" type="MeshInstance3D" parent="Table" unique_id=2000000042]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.725, 0)
+mesh = SubResource("BoxMesh_table")
+surface_material_override/0 = SubResource("Mat_table")
+
 [node name="TestBox" parent="." unique_id=2000000010 instance=ExtResource("7_testbox")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.64826566, 0.7927524)
 
 [node name="TV" parent="." unique_id=-1294967286 instance=ExtResource("13_tv")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, 0.2, -1)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, 0.95, -1)
 
 [node name="NESSystem" parent="." unique_id=-294967286 instance=ExtResource("14_nes")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0.05, -0.8)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0.80, -0.8)
 
 [node name="NESCartridge" parent="." unique_id=705032705 instance=ExtResource("15_cartridge")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0.008, -0.55)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0.758, -0.55)
 rom_path = "C:/Users/rymcc/libretro/007 - GoldenEye (USA).z64"
 game_label = "007 GoldenEye"
 
